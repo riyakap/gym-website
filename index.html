@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gym Coach • Goals → Plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container row between center">
+      <h1 class="logo">Gym Coach</h1>
+      <nav>
+        <a href="#intake">Your Info</a>
+        <a href="#results">Calories & Protein</a>
+        <a href="#plan">Gym Plan</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Welcome -->
+    <section class="card hero" aria-labelledby="welcome-title">
+      <div>
+        <h2 id="welcome-title">Welcome 👋</h2>
+        <p>Enter your details and goal. We’ll calculate calories/protein and build a weekly gym plan tailored to you.</p>
+      </div>
+    </section>
+
+    <!-- Intake Form -->
+    <section id="intake" class="card" aria-labelledby="intake-title">
+      <h2 id="intake-title">Input your information</h2>
+      <form id="intake-form">
+        <div class="grid two">
+          <div class="field">
+            <label>Gender</label>
+            <div class="chips" role="radiogroup" aria-label="Gender">
+              <label class="chip"><input type="radio" name="gender" value="male" required> Male</label>
+              <label class="chip"><input type="radio" name="gender" value="female"> Female</label>
+              <label class="chip"><input type="radio" name="gender" value="other"> Other</label>
+            </div>
+            <p class="hint">Used only for the BMR constant. If "Other", we’ll use a neutral constant.</p>
+          </div>
+
+          <div class="field">
+            <label>Units</label>
+            <div class="chips" role="radiogroup" aria-label="Units">
+              <label class="chip"><input type="radio" name="units" value="imperial" checked> Imperial</label>
+              <label class="chip"><input type="radio" name="units" value="metric"> Metric</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid three" id="imperial-fields">
+          <div class="field">
+            <label for="height-ft">Height (ft)</label>
+            <input id="height-ft" name="heightFt" type="number" min="3" max="8" value="5" required>
+          </div>
+          <div class="field">
+            <label for="height-in">Height (in)</label>
+            <input id="height-in" name="heightIn" type="number" min="0" max="11" value="5" required>
+          </div>
+          <div class="field">
+            <label for="weight-lb">Weight (lb)</label>
+            <input id="weight-lb" name="weightLb" type="number" min="60" max="600" value="140" required>
+          </div>
+        </div>
+
+        <div class="grid two hidden" id="metric-fields">
+          <div class="field">
+            <label for="height-cm">Height (cm)</label>
+            <input id="height-cm" name="heightCm" type="number" min="120" max="230">
+          </div>
+          <div class="field">
+            <label for="weight-kg">Weight (kg)</label>
+            <input id="weight-kg" name="weightKg" type="number" min="30" max="300">
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <label for="age">Age</label>
+            <input id="age" name="age" type="number" min="13" max="90" value="25" required>
+          </div>
+          <div class="field">
+            <label for="activity">Activity level</label>
+            <select id="activity" name="activity" required>
+              <option value="sedentary">Sedentary — little or no exercise</option>
+              <option value="light">Light — 1–3x/week</option>
+              <option value="moderate" selected>Moderate — 4–5x/week</option>
+              <option value="active">Active — daily or 3–4x intense</option>
+              <option value="very_active">Very Active — 6–7x/week</option>
+              <option value="extra_active">Extra Active — physical job + training</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <label>Goal</label>
+            <div class="chips" role="radiogroup" aria-label="Goal">
+              <label class="chip"><input type="radio" name="goal" value="lose" checked> Lose Weight</label>
+              <label class="chip"><input type="radio" name="goal" value="gain"> Gain Muscle</label>
+              <label class="chip"><input type="radio" name="goal" value="both"> Both (Recomp)</label>
+            </div>
+          </div>
+
+          <div class="field" id="loss-rate-field">
+            <label for="loss-rate">Weight loss pace</label>
+            <select id="loss-rate" name="lossRate">
+              <option value="0.5">Mild (0.5 lb/week)</option>
+              <option value="1" selected>Standard (1 lb/week)</option>
+              <option value="2">Aggressive (2 lb/week)</option>
+            </select>
+          </div>
+
+          <div class="field hidden" id="surplus-field">
+            <label for="surplus">Muscle gain surplus</label>
+            <select id="surplus" name="surplus">
+              <option value="250" selected>+250 kcal/day</option>
+              <option value="500">+500 kcal/day</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row end">
+          <button class="btn" type="submit">Calculate & Build Plan</button>
+          <button class="btn ghost" type="button" id="reset-btn">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Results -->
+    <section id="results" class="card" aria-labelledby="results-title">
+      <h2 id="results-title">Calories & Protein</h2>
+      <div id="calc-output" class="results-grid" aria-live="polite"></div>
+      <p class="muted small">Formulas used: Mifflin–St Jeor BMR → TDEE × activity; weight-change ≈ 500 kcal/day per 1 lb/week. Protein defaults to ~1.0 g/lb (2.2 g/kg) with goal-based tweaks.</p>
+    </section>
+
+    <!-- Plan -->
+    <section id="plan" class="card" aria-labelledby="plan-title">
+      <h2 id="plan-title">Weekly Gym Plan</h2>
+      <div id="plan-output" class="plan-grid"></div>
+      <details class="tips"><summary>Cardio options</summary>
+        <ul>
+          <li>Stairmaster level 5 – 30 min</li>
+          <li>Incline walk (12–3–30)</li>
+          <li>Biking / Elliptical / Swimming</li>
+        </ul>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Built with ❤ for your goals. Save to GitHub → deploy on Vercel.</p>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
